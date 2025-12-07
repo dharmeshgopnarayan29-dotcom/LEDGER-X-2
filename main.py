@@ -156,3 +156,12 @@ def get_daily_spending(month: int, year: int, db: Session = Depends(get_db), cur
 @app.get("/api/yearly-expenses")
 def get_yearly_expenses(year: int, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     return crud.get_yearly_expenses(db, year, user_id=current_user.id)
+
+# TEMPORARY: Admin endpoint to reset DB in production
+@app.get("/api/admin/reset-db-force")
+def reset_database_force():
+    # Drop all tables
+    Base.metadata.drop_all(bind=engine)
+    # Recreate all tables
+    Base.metadata.create_all(bind=engine)
+    return {"message": "Database has been reset successfully. All data deleted. New schema applied."}
